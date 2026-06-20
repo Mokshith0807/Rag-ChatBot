@@ -1,0 +1,27 @@
+stages:
+  - test
+  - lint
+  - security
+
+image: python:3.11
+
+before_script:
+  - python -m pip install --upgrade pip
+  - pip install -r requirements.txt
+
+pytest:
+  stage: test
+  script:
+    - pytest -q
+
+lint:
+  stage: lint
+  script:
+    - pip install ruff
+    - ruff check .
+
+security:
+  stage: security
+  script:
+    - pip install bandit
+    - bandit -r . -ll
