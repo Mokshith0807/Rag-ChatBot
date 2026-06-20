@@ -1,31 +1,25 @@
-
-from pypdf import PdfReader
-from langchain_core.documents import Document
 from pathlib import Path
+
+import pymupdf4llm  # type: ignore
+from langchain_core.documents import Document
 
 
 def load_pdf(pdf_path: str):
     """
-    Load PDF and return LangChain Documents.
-    Each page becomes one Document.
+    Load a PDF using PyMuPDF4LLM and return LangChain Documents.
     """
 
-    reader = PdfReader(pdf_path)
+    pages = pymupdf4llm.to_markdown(pdf_path, page_chunks=True)
 
     documents = []
 
-    for page_num, page in enumerate(reader.pages, start=1):
-
-        text = page.extract_text()
+    for page_num, page in enumerate(pages, start=1):
+        text = page.get("text", "")
 
         if text and text.strip():
-
             doc = Document(
                 page_content=text,
-                metadata={
-                    "source": Path(pdf_path).name,
-                    "page": page_num
-                }
+                metadata={"source": Path(pdf_path).name, "page": page_num},
             )
 
             documents.append(doc)

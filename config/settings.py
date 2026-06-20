@@ -9,9 +9,7 @@ TOP_K = 3
 
 # Embedding Model
 
-EMBEDDING_MODEL = (
-    "sentence-transformers/all-MiniLM-L6-v2"
-)
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 # Gemini
 

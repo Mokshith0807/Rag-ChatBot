@@ -1,34 +1,25 @@
-from dotenv import load_dotenv
-import os
-
-from langchain_google_genai import ChatGoogleGenerativeAI
-
-from config.settings import GEMINI_MODEL
-
-load_dotenv()
+from chains.local_llm import (
+    generate_local_answer,
+    load_local_llm,
+)
 
 
 def create_rag_chain():
-
-    llm = ChatGoogleGenerativeAI(
-        model=GEMINI_MODEL,
-        temperature=0,
-        google_api_key=os.getenv("GOOGLE_API_KEY")
-    )
-
-    return llm
+    """
+    Load the local LLM.
+    """
+    return load_local_llm()
 
 
 def build_context(documents):
+    """
+    Build context string from retrieved documents.
+    """
 
     context = ""
 
     for doc in documents:
-
-        page = doc.metadata.get(
-            "page",
-            "Unknown"
-        )
+        page = doc.metadata.get("page", "Unknown")
 
         context += f"\n\n[Page {page}]\n"
         context += doc.page_content
@@ -36,25 +27,20 @@ def build_context(documents):
     return context
 
 
-def generate_answer(
-    llm,
-    documents,
-    question
-):
+def generate_answer(llm, documents, question):
+    """
+    Generate an answer using the local LLM.
+    """
 
-    context = build_context(
-        documents
-    )
+    context = build_context(documents)
 
     prompt = f"""
 You are a helpful AI assistant.
 
-Use ONLY the provided context.
+Answer ONLY using the provided context.
 
-If the answer is not available in the context,
-respond exactly:
-
-I could not find the answer in the document.
+If the answer is not present in the context, reply:
+"I could not find the answer in the document."
 
 Context:
 {context}
@@ -65,8 +51,4 @@ Question:
 Answer:
 """
 
-    response = llm.invoke(
-        prompt
-    )
-
-    return response.content
+    return generate_local_answer(llm, prompt)

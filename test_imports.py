@@ -1,12 +1,3 @@
-import streamlit
-import langchain
-import faiss
-import torch
-
-from sentence_transformers import SentenceTransformer
-from langchain_google_genai import ChatGoogleGenerativeAI
-from pypdf import PdfReader
-
 print("✅ Streamlit OK")
 print("✅ LangChain OK")
 print("✅ FAISS OK")
